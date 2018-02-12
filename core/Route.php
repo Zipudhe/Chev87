@@ -7,8 +7,17 @@ class Route {
   private $routes;
 
   public function __construct(array $routes){
-    $this->routes = $routes;
+    $this->setRoutes($routes);
     $this->run();
+  }
+
+  private function setRoutes($routes){
+    foreach ($routes as $route) {
+      $explode  = explode('@',$route[1]);
+      $rota = [$route[0], $explode[0], $explode[1]];
+      $newroutes[] = $rota;
+    }
+    $this->routes = $newroutes;
   }
 
   private function getUrl(){
@@ -18,22 +27,38 @@ class Route {
   private function run(){
     $url =  $this->getUrl();
     $urlArray = explode('/', $url);
-    print_r($urlArray);
     foreach ($this->routes as $route){
         $routeArray = explode('/', $route[0]);
-        echo '<br>';
-        print_r($routeArray);
       for($i = 0; $i < count($routeArray); $i++){
           if((strpos($routeArray[$i], "{") !== false) && (count($urlArray) == count($routeArray))){
             $routeArray[$i] = $urlArray[$i];
+            $parametro[] = $urlArray[$i];
           }
-          $route[0] = implode($routeArray, '/ ');
+          $route[0] = implode($routeArray, '/');
       }
-      if($ulr == $rote[0]){
-        echo "Rota Valida";
+      if($url == $route[0]){
+        $achou = true;
+        $controller = $route[1];
+        $action = $route[2];
+        break;
       }
-      else {
-        echo "Rota invalida";
+    }
+    if($achou){
+      $controller = Container::newController($controller);
+
+      switch (count($parametro)) {
+        case 1:
+            $controller->$action($parametro[0]);
+            break;
+        case 2:
+            $controller->$action($parametro[0], $parametro[1]);
+            break;
+        case 3:
+            $controller->$action($parametro[0], $parametro[1], $parametro[2]);
+            break;
+        default:
+            $controller->$action();
+            break;
       }
     }
   }
