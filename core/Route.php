@@ -13,7 +13,7 @@ class Route {
 
   private function setRoutes($routes){
     foreach ($routes as $route) {
-      $explode  = explode('@',$route[1]);
+      $explode  = explode('@', $route[1]);
       $rota = [$route[0], $explode[0], $explode[1]];
       $newroutes[] = $rota;
     }
@@ -29,24 +29,28 @@ class Route {
     $urlArray = explode('/', $url);
     foreach ($this->routes as $route){
         $routeArray = explode('/', $route[0]);
-      for($i = 0; $i < count($routeArray); $i++){
-          if((strpos($routeArray[$i], "{") !== false) && (count($urlArray) == count($routeArray))){
-            $routeArray[$i] = $urlArray[$i];
-            $parametro[] = $urlArray[$i];
-          }
+        $parametro = [];
+        for($i = 0; $i < count($routeArray); $i++){
+            if((strpos($routeArray[$i], "{") !== false) && (count($urlArray) == count($routeArray))){
+              $routeArray[$i] = $urlArray[$i];
+              $parametro[] = $urlArray[$i];
+            }
           $route[0] = implode($routeArray, '/');
-      }
+        }
       if($url == $route[0]){
-        $achou = true;
+        $found = true;
         $controller = $route[1];
         $action = $route[2];
         break;
       }
     }
-    if($achou){
+      // echo $found;
+    // echo $url . "<br>";
+    // echo $route[0];
+    if($found){
+      // echo $controller;
       $controller = Container::newController($controller);
-
-      switch (count($parametro)) {
+      switch(count($parametro)){
         case 1:
             $controller->$action($parametro[0]);
             break;
@@ -61,6 +65,9 @@ class Route {
             break;
       }
     }
+    // else{
+    //   Container::pageNotFound();
+    // }
   }
 }
 
