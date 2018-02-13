@@ -20,6 +20,20 @@ class Route {
     $this->routes = $newroutes;
   }
 
+  private function getRequest(){
+    $objeto = new \stdClass;
+
+    foreach($_GET as $Key => $value){
+      $objeto->get->$Key = $value;
+    }
+
+    foreach($_POST as $Key => $value){
+      $objeto->post->$Key = $value;
+    }
+
+    return $objeto;
+  }
+
   private function getUrl(){
       return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
   }
@@ -44,30 +58,26 @@ class Route {
         break;
       }
     }
-      // echo $found;
-    // echo $url . "<br>";
-    // echo $route[0];
     if($found){
-      // echo $controller;
       $controller = Container::newController($controller);
       switch(count($parametro)){
         case 1:
-            $controller->$action($parametro[0]);
+            $controller->$action($parametro[0], $this->getRequest());
             break;
         case 2:
-            $controller->$action($parametro[0], $parametro[1]);
+            $controller->$action($parametro[0], $parametro[1], $this->getRequest());
             break;
         case 3:
-            $controller->$action($parametro[0], $parametro[1], $parametro[2]);
+            $controller->$action($parametro[0], $parametro[1], $parametro[2], $this->getRequest());
             break;
         default:
-            $controller->$action();
+            $controller->$action($this->getRequest());
             break;
       }
     }
-    // else{
-    //   Container::pageNotFound();
-    // }
+    else{
+      echo "Página não encontrada!";
+    }
   }
 }
 

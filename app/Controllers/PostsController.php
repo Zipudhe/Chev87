@@ -7,9 +7,9 @@
     public function index(){
       echo "Post";
     }
-
-    public function show($id){
+    public function show($id, $request){
       echo $id;
+
     }
   }
  ?>
