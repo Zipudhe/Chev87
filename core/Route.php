@@ -12,6 +12,7 @@ class Route {
   }
 
   private function setRoutes($routes){
+
     foreach ($routes as $route) {
       $explode  = explode('@', $route[1]);
       $rota = [$route[0], $explode[0], $explode[1]];
@@ -41,9 +42,11 @@ class Route {
   private function run(){
     $url =  $this->getUrl();
     $urlArray = explode('/', $url);
+
     foreach ($this->routes as $route){
         $routeArray = explode('/', $route[0]);
         $parametro = [];
+
         for($i = 0; $i < count($routeArray); $i++){
             if((strpos($routeArray[$i], "{") !== false) && (count($urlArray) == count($routeArray))){
               $routeArray[$i] = $urlArray[$i];
